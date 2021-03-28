@@ -1,0 +1,86 @@
+<div class="register-photo d-flex justify-content-center align-items-center">
+    <div class="form-container">
+        <div class="image-holder"></div>
+        <form method="post" [formGroup]="signUpForm">
+            <h2 class="text-center"><strong>SongShareApp</strong></h2>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="Name" [(ngModel)]="signUpData.name"
+                        formControlName="name">
+                </div>
+                <div *ngIf="name.errors && (name.dirty)">
+                    <small *ngIf="name.errors.required" class="errorClass">
+                        Required
+                    </small>
+                    <small *ngIf="name.errors.pattern" class="errorClass">
+                        Only Characters Are Allowed
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user-md"></i></span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="User Name"
+                        [(ngModel)]="signUpData.userName" formControlName="userName">
+                </div>
+                <div *ngIf="userName.errors && (userName.dirty)">
+                    <small *ngIf="userName.errors.required" class="errorClass">
+                        Required
+                    </small>
+                    <small *ngIf="userName.errors.pattern" class="errorClass">
+                        user name Is Not Proper
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    </div>
+                    <input class="form-control" type="email" placeholder="Email Id" [(ngModel)]="signUpData.emailId"
+                        formControlName="emailId">
+                </div>
+                <div *ngIf="emailId.errors && (emailId.dirty)">
+                    <small *ngIf="emailId.errors.required" class="errorClass">
+                        Required
+                    </small>
+                    <small *ngIf="emailId.errors.pattern" class="errorClass">
+                        Email Is Not In Proper Format
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                    </div>
+                    <input class="form-control" type="password" placeholder="Password" [(ngModel)]="signUpData.password"
+                        formControlName="password">
+                </div>
+                <div *ngIf="password.errors && (password.dirty)">
+                    <small *ngIf="password.errors.required" class="errorClass">
+                        Required
+                    </small>
+                    <small *ngIf="password.errors.pattern" class="errorClass">
+                        Password Should Contain Atleast One Uppercase, One Lowercase, One Special Character And
+                        Digit
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-block btn-primary" type="submit" (click)="onSignUp()"
+                    [disabled]="signUpForm.invalid">
+                    Sign Up
+                </button>
+            </div>
+            <a class="already" routerLink="/logIn">
+                You already have an account? Login here.
+            </a>
+        </form>
+    </div>
+</div>

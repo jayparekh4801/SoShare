@@ -7,8 +7,6 @@ import { SignUpComponent } from './Components/sign-up/sign-up.component';
 import { LogInComponent } from './Components/log-in/log-in.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Routes, RouterModule } from "@angular/router";
 import { DashboardComponent } from './Components/dashboard/dashboard.component';
 import { AudioTryComponent } from './Components/audio-try/audio-try.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

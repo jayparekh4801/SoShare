@@ -30,11 +30,11 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css",
-              "/Users/jayparekh/Documents/SongShareApp/SongSharing/node_modules/bootstrap/dist/css/bootstrap.min.css"
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": [
-              "/Users/jayparekh/Documents/SongShareApp/SongSharing/node_modules/jquery/dist/jquery.min.js",
-              "/Users/jayparekh/Documents/SongShareApp/SongSharing/node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           },
           "configurations": {

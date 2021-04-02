@@ -23,7 +23,7 @@ export class ImportPlayListsService {
 		if (userName != null) {
 			header = header.set("userName", userName);
 		}
-		// console.log("h");
+		console.log(playList);
 		return this.http.post("http://localhost:8000/importPlayList", playList, { headers: header });
 	}
 }

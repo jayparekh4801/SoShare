@@ -241,60 +241,61 @@ app.get("/getUserDetails", (req, res) => {
 
 app.post("/searchFriend", (req, res) => {
     User.findOne({ userName: req.body.userName }, (err, success) => {
+        let flag = 0;
         let userName = success.userName;
         let image = success.image;
         if (success) {
-            FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
-                console.log("friedlidst")
-                success.friendList.forEach((element) => {
-                    if (element.userName == req.body.userName) {
-                        res.send({
-                            success: true,
-                            message: "User Found",
-                            data: {
-                                userName: userName,
-                                image: image,
-                                friends: true
-                            }
-                        });
-                    }
-                });
-            });
-            PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
-                success.friendRequests.forEach((element) => {
-                    if (element.userName == req.body.userName) {
-                        res.send({
-                            success: true,
-                            message: "User Found",
-                            data: {
-                                userName: userName,
-                                image: image,
-                                friends: true
-                            }
-                        });
-                    }
+            let searchFriendList = new Promise((resolve) => {
+                FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
+                    console.log("friedlidst")
+                    success.friendList.forEach((element) => {
+                        if (element.userName == req.body.userName) {
+                            flag = 1;
+                            console.log(element.userName);
+                            res.send({
+                                success: true,
+                                message: "User Found",
+                                data: {
+                                    userName: userName,
+                                    image: image,
+                                    friends: true
+                                }
+                            });
+                        }
+                    });
                 });
             });
 
-            // res.send({
-            //     success: true,
-            //     message: "User Found",
-            //     data: {
-            //         userName: success.userName,
-            //         image: success.image,
-            //         friends: false
-            //     }
-            // });
-
+            let searchPendingList = new Promise((resolve) => {
+                PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
+                    success.friendRequests.forEach((element) => {
+                        if (element.userName == req.body.userName) {
+                            flag = 1;
+                            res.send({
+                                success: true,
+                                message: "User Found",
+                                data: {
+                                    userName: userName,
+                                    image: image,
+                                    friends: true
+                                }
+                            });
+                            console.log("after");
+                        }
+                    });
+                });
+            });
+        
+            
         }
-        // else {
-        //     console.log("sfsasf")
-        //     res.send({
-        //         success: false,
-        //         message: "User Does Not Exist",
-        //         data: err
-        //     });
-        // }
+        else {
+            console.log("sfsasf")
+            res.send({
+                success: false,
+                message: "User Does Not Exist",
+                data: err
+            });
+        }
     })
 });
 

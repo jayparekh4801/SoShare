@@ -103,8 +103,6 @@ app.post("/signUp", (req, res) => {
 app.post("/logIn", (req, res) => {
     User.findOne({ emailId: req.body.emailId, userName: req.body.userName, password: req.body.password }, (err, success) => {
         if (success) {
-            console.log(req.body.userName)
-            res.cookie("userName", req.body.userName);
             res.send({
                 success: true,
                 message: "log in successfull",
@@ -124,7 +122,6 @@ app.post("/logIn", (req, res) => {
 // PlayList EndPoint
 
 app.get("/getPlayLists", (req, res) => {
-    req.cookies["userName"]
     PlayList.findOne({ userName: req.headers.username }, { playLists: 1, _id: 0 }, (err, success) => {
         if (err) {
             res.send({
@@ -146,7 +143,6 @@ app.get("/getPlayLists", (req, res) => {
 // pendingRequests endpoint
 
 app.get("/getPendingRequestList", (req, res) => {
-    req.cookies["userName"]
     PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
         if (err) {
             res.send({
@@ -168,8 +164,6 @@ app.get("/getPendingRequestList", (req, res) => {
 // friendList endpoint
 
 app.get("/getFriendList", (req, res) => {
-    let d = req.cookies["userName"];
-    console.log(d);
     FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
         if (err) {
             res.send({
@@ -179,8 +173,6 @@ app.get("/getFriendList", (req, res) => {
             });
         }
         else {
-            console.log(req.cookies["userName"]);
-            console.log(success);
             res.send({
                 success: true,
                 message: "feiendList for user is found",
@@ -196,10 +188,9 @@ app.post("/importPlayList", (req, res) => {
 
     PlayList.findOne({ userName: req.headers.username }, { playLists: 1, _id: 0 }, (err, success) => {
         if (success) {
-            // success.playLists.push(req.body.playList);
             let flag = 0;
             success.playLists.forEach(element => {
-                if(element.playListName == req.body.playListName) {
+                if (element.playListName == req.body.playListName) {
                     console.log("padi");
                     element.songs.push(req.body.song)
                     flag = 1;
@@ -248,69 +239,82 @@ app.get("/getUserDetails", (req, res) => {
 
 // search friend endpoint
 
-app.post("/searchFriend", (req,res) => {
-    User.findOne({userName : req.body.userName}, (err, success) => {
-        if(success) {
-            let flag = 0
-            FriendList.findOne({userName : req.headers.username}, {friendList : 1, _id : 0}, (err, success) => {
+app.post("/searchFriend", (req, res) => {
+    User.findOne({ userName: req.body.userName }, (err, success) => {
+        let userName = success.userName;
+        let image = success.image;
+        if (success) {
+            FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
+                console.log("friedlidst")
                 success.friendList.forEach((element) => {
-                    if(element.userName == req.body.userName) {
-                        flag = 1;
+                    if (element.userName == req.body.userName) {
+                        res.send({
+                            success: true,
+                            message: "User Found",
+                            data: {
+                                userName: userName,
+                                image: image,
+                                friends: true
+                            }
+                        });
                     }
+                });
+            });
+            PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
+                success.friendRequests.forEach((element) => {
+                    if (element.userName == req.body.userName) {
+                        res.send({
+                            success: true,
+                            message: "User Found",
+                            data: {
+                                userName: userName,
+                                image: image,
+                                friends: true
+                            }
+                        });
+                    }
+                });
+            });
 
-                });
-            })
-            if(flag == 1) {
-                res.send({
-                    success : true,
-                    message : "User Found",
-                    data : {
-                        userName : success.userName,
-                        image : success.image,
-                        friends : false
-                    }
-                });
-            }
-            else {
-                res.send({
-                    success : true,
-                    message : "User Found",
-                    data : {
-                        userName : success.userName,
-                        image : success.image,
-                        friends : true
-                    }
-                });
-            }
-            
+            // res.send({
+            //     success: true,
+            //     message: "User Found",
+            //     data: {
+            //         userName: success.userName,
+            //         image: success.image,
+            //         friends: false
+            //     }
+            // });
+
         }
-        else{
-            res.send({
-                success : false,
-                message : "User Does Not Exist",
-                data : err
-            })
-        }
+        // else {
+        //     console.log("sfsasf")
+        //     res.send({
+        //         success: false,
+        //         message: "User Does Not Exist",
+        //         data: err
+        //     });
+        // }
     })
 });
 
 // Change User Iamge endpoint
 
 app.post("/changeimage", (req, res) => {
-    User.updateOne({userName : req.headers.username}, {image : req.body.image}, (req, success) => {
-        if(success) {
+    User.updateOne({ userName: req.headers.username }, { image: req.body.image }, (req, success) => {
+        if (success) {
             res.send({
-                success : true,
-                message : "Image Is Update",
-                data : null
+                success: true,
+                message: "Image Is Update",
+                data: null
             });
         }
 
         else {
             res.send({
-                success : false,
-                message : "image is not updated",
-                data : err
+                success: false,
+                message: "image is not updated",
+                data: err
             });
         }
     });
@@ -319,14 +323,41 @@ app.post("/changeimage", (req, res) => {
 // Send Friend Request endpoint
 
 app.post("/friendRequest", (req, res) => {
-    PendingRequestList.updateOne({userName : req.headers.username}, { 
-        $push : {
-            friendRequests : {
-                
+    PendingRequestList.updateOne({ userName: req.headers.username }, {
+        $push: {
+            friendRequests: {
+                userName: req.body.userName,
+                image: req.body.image,
+                request: "sent"
             }
         }
-
-    })
+    }, (err, success) => {
+        if (success) {
+            PendingRequestList.updateOne({ userName: req.body.userName }, {
+                $push: {
+                    friendRequests: {
+                        userName: req.headers.username,
+                        image: req.headers.image
+                    }
+                }
+            }, (err, success) => {
+                if (success) {
+                    res.send({
+                        success: true,
+                        message: "Request Is Sent",
+                        data: null
+                    })
+                }
+            })
+        }
+        else {
+            res.send({
+                success: false,
+                message: "Request Not Sent, Please Try Again",
+                data: err
+            })
+        }
+    });
 })
 // endPoints Listener
 

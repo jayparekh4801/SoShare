@@ -183,9 +183,11 @@ export class DashboardComponent implements OnInit {
 		}
 	}
 
-	sendFriendRequest(userName : any) {
-		this.userRegarding.sendFriendRequest(userName).subscribe((data : any) => {
-			console.log(data);
+	sendFriendRequest(user : any) {
+		this.userRegarding.sendFriendRequest(user).subscribe((data : any) => {
+			if(data.success) {
+				Swal.fire("SongShareApp", data.message, "success");
+			}
 		})
 	}
 }

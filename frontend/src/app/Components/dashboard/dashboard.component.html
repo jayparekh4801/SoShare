@@ -107,8 +107,8 @@
                             <div class="right p-2" style="margin-left: 0px;">
                                 <h3>{{searchedUserData.userName}}</h3>
                             </div>
-                            <div *ngIf="friends" class="ml-auto p-2 left">
-                                <i class="fa fa-plus-circle fa-2x" style="color: #047bfd; cursor: pointer;" (click) = "sendFriendRequest(searchedUserData.userName)"></i>
+                            <div *ngIf="!friends" class="ml-auto p-2 left">
+                                <i class="fa fa-plus-circle fa-2x" style="color: #047bfd; cursor: pointer;" (click) = "sendFriendRequest(searchedUserData)"></i>
                             </div>
                         </li>
                         <li *ngIf="!userSerched">
@@ -128,6 +128,21 @@
                     <h5 class="card-title">Your Loved Once</h5>
                     <ul class="friend-list">
                         <li *ngFor="let friend of friendListData">
+                            <div class="left">
+                                <img [src]="friend.image" alt="">
+                            </div>
+                            <div class="right">
+                                <h3>{{friend.userName}}</h3>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card social-timeline-card">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Requests</h5>
+                    <ul class="friend-list">
+                        <li *ngFor="let friend of pendingRequestsData">
                             <div class="left">
                                 <img [src]="friend.image" alt="">
                             </div>

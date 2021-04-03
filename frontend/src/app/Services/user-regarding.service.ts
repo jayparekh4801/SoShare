@@ -38,7 +38,8 @@ export class UserRegardingService {
 	sendFriendRequest(requestedFriend : any) {
 		let header = new HttpHeaders();
 		let userName = localStorage.getItem("userName");
-		if (userName != null) {
+		let image = localStorage.getItem("image");
+		if (userName != null && image != null) {
 			header = header.set('userName', userName);
 		}
 		return this.http.post("http://localhost:8000/friendRequest", requestedFriend, {headers : header});

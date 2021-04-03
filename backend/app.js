@@ -251,14 +251,38 @@ app.get("/getUserDetails", (req, res) => {
 app.post("/searchFriend", (req,res) => {
     User.findOne({userName : req.body.userName}, (err, success) => {
         if(success) {
-            res.send({
-                success : true,
-                message : "User Found",
-                data : {
-                    userName : success.userName,
-                    image : success.image
-                }
-            });
+            let flag = 0
+            FriendList.findOne({userName : req.headers.username}, {friendList : 1, _id : 0}, (err, success) => {
+                success.friendList.forEach((element) => {
+                    if(element.userName == req.body.userName) {
+                        flag = 1;
+                    }
+
+                });
+            })
+            if(flag == 1) {
+                res.send({
+                    success : true,
+                    message : "User Found",
+                    data : {
+                        userName : success.userName,
+                        image : success.image,
+                        friends : false
+                    }
+                });
+            }
+            else {
+                res.send({
+                    success : true,
+                    message : "User Found",
+                    data : {
+                        userName : success.userName,
+                        image : success.image,
+                        friends : true
+                    }
+                });
+            }
+            
         }
         else{
             res.send({
@@ -287,11 +311,23 @@ app.post("/changeimage", (req, res) => {
                 success : false,
                 message : "image is not updated",
                 data : err
-            })
+            });
         }
+    });
+});
+
+// Send Friend Request endpoint
+
+app.post("/friendRequest", (req, res) => {
+    PendingRequestList.updateOne({userName : req.headers.username}, { 
+        $push : {
+            friendRequests : {
+                
+            }
+        }
+
     })
 })
-
 // endPoints Listener
 
 app.listen(port, () => {

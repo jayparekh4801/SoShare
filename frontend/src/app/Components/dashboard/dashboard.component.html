@@ -6,7 +6,8 @@
         <div class="card-body">
             <div class="wrapper">
                 <label for="myfile" id="add">
-                    <img [src]="userDetailsData.image" alt="" class="user-profile" title = "Upload Image" style="cursor: pointer;">
+                    <img [src]="userDetailsData.image" alt="" class="user-profile" title="Upload Image"
+                        style="cursor: pointer;">
                 </label>
                 <input type="file" id="myfile" name="image" accept="image" class="d-none"
                     (change)="changeUserImage($event)">
@@ -28,7 +29,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col-lg-5 gedf-main">
+        <div class="col-lg-4 gedf-main">
             <!-- Post /////-->
             <!--- \\\\\\\Post-->
             <div class="card social-timeline-card" *ngFor="let playList of playListsData"
@@ -81,22 +82,16 @@
                 <div class="input-group">
                     <label for="playListUpload" class="btn btn-danger btn-block">Import PlayList Here</label>
                     <input type="file" id="playListUpload" multiple="multiple" accept="audio/*" style="display: none"
-                        (change)="onFileChange($event)" (click) = "getPLayListName()">
+                        (change)="onFileChange($event)" (click)="getPLayListName()">
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-4">
             <div class="card social-timeline-card">
                 <div class="card-body">
                     <h5 class="card-title">Serach Here For Friend</h5>
                     <ul class="friend-list">
                         <li>
-                            <!-- <div class="left">
-                                <img [src]="friend.image" alt="">
-                            </div>
-                            <div class="right">
-                                <h3>{{friend.userName}}</h3>
-                            </div> -->
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="Find Friend"
                                     aria-label="Recipient's username" aria-describedby="basic-addon2"
@@ -105,17 +100,20 @@
                                         class="fa fa-search text-primary"></i></span>
                             </div>
                         </li>
-                        <li *ngIf="userSerched">
-                            <div class="left">
-                                <img [src]="searchedUserData.image" alt="">
+                        <li *ngIf="userSerched" class="d-flex" style="cursor: auto;">
+                            <div class="left p-2">
+                                <img [src]="searchedUserData.image" alt="" style="margin-right: 0px;">
                             </div>
-                            <div class="right">
+                            <div class="right p-2" style="margin-left: 0px;">
                                 <h3>{{searchedUserData.userName}}</h3>
+                            </div>
+                            <div *ngIf="friends" class="ml-auto p-2 left">
+                                <i class="fa fa-plus-circle fa-2x" style="color: #047bfd; cursor: pointer;" (click) = "sendFriendRequest(searchedUserData.userName)"></i>
                             </div>
                         </li>
                         <li *ngIf="!userSerched">
                             <div class="left">
-                                <i class="fa fa-user"></i>
+                                <div><i class="fa fa-user"></i></div>
                             </div>
                             <div class="right ml-2">
                                 <h3>{{searchedUserData.message || 'Serch Result'}}</h3>

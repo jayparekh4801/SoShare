@@ -20,24 +20,25 @@ export class DashboardComponent implements OnInit {
 		private pendingRequestsService: PendingRequestsService,
 		private playListsService: PlayListsService,
 		private importplayList: ImportPlayListsService,
-		private userRegarding : UserRegardingService,
+		private userRegarding: UserRegardingService,
 		private sanitizer: DomSanitizer,
 		private router: Router) { }
 
 	friendListData: any = [];
 	pendingRequestsData: any = [];
 	playListsData: any = [];
-	songsData : any = [];
-    userDetailsData : any = {};
+	songsData: any = [];
+	userDetailsData: any = {};
 	// variables for serching friend
 
-	searchedUserName : any = "";
-	searchedUserData : any = {};
-	userSerched : boolean = false
+	searchedUserName: any = "";
+	searchedUserData: any = {};
+	userSerched: boolean = false;
+	friends : boolean = false;
 
 	// till here
 
-	
+
 
 	ngOnInit(): void {
 		this.playListsService.getPlayLists().subscribe((data): any => {
@@ -57,7 +58,7 @@ export class DashboardComponent implements OnInit {
 			console.log(this.pendingRequestsData);
 		});
 
-		this.userRegarding.getUserDetails().subscribe((data : any) => {
+		this.userRegarding.getUserDetails().subscribe((data: any) => {
 			this.userDetailsData = data.data;
 		});
 	}
@@ -72,7 +73,7 @@ export class DashboardComponent implements OnInit {
 		// 	console.log(data);
 		// 	this.importplayList.importPlayList(data).subscribe((data: any) => {
 		// 		if (data.success) {
-					// Swal.fire("SongShareApp", data.message, "success");
+		// Swal.fire("SongShareApp", data.message, "success");
 		// 		}
 		// 		else {
 		// 			Swal.fire("SongShareApp", data.message, "error");
@@ -81,11 +82,11 @@ export class DashboardComponent implements OnInit {
 		// });
 
 		let files = event.target.files;
-		for(let  i = 0; i < files.length; i++) {
-			this.putFilesInWay(files[i]).then((data : any) => {
+		for (let i = 0; i < files.length; i++) {
+			this.putFilesInWay(files[i]).then((data: any) => {
 				this.playList.song = Object.assign({}, data);
-				this.postSong(this.playList).then((data : any) => {
-					if((i == files.length -1) && (data.success)){
+				this.postSong(this.playList).then((data: any) => {
+					if ((i == files.length - 1) && (data.success)) {
 						Swal.fire("SongShareApp", data.message, "success");
 					}
 				})
@@ -93,14 +94,14 @@ export class DashboardComponent implements OnInit {
 		}
 	}
 
-	postSong(song : any) {
+	postSong(song: any) {
 		return new Promise(resolve => {
-			this.importplayList.importPlayList(song).subscribe((data : any) => {
+			this.importplayList.importPlayList(song).subscribe((data: any) => {
 				resolve(data);
 			})
 		})
 	}
-	
+
 	getPLayListName() {
 		this.playList.playListName = String(prompt("Enter Name Of PlayList"));
 	}
@@ -116,7 +117,7 @@ export class DashboardComponent implements OnInit {
 					console.log(data);
 					let song = Object.assign({}, data);
 					this.playList.songs.push(song);
-					if (i === files.length - 1){
+					if (i === files.length - 1) {
 						this.playList.playListName = String(prompt("Enter Name Of PlayList"));
 						resolve(this.playList);
 					}
@@ -141,19 +142,21 @@ export class DashboardComponent implements OnInit {
 		return this.sanitizer.bypassSecurityTrustUrl(url);
 	}
 
-	getSongsOfPlaylist(playListName : any) {
-		this.playListsData.forEach((element : any) => {
-			if(element.playListName === playListName) {
+	getSongsOfPlaylist(playListName: any) {
+		this.playListsData.forEach((element: any) => {
+			if (element.playListName === playListName) {
 				this.songsData = element.songs;
 			}
 		});
 	}
 
 	getSearchedFriend() {
-		this.userRegarding.getSearchedFriend({userName : this.searchedUserName}).subscribe((data : any) => {
-			if(data.success) {
+		this.friends = false;
+		this.userRegarding.getSearchedFriend({ userName: this.searchedUserName }).subscribe((data: any) => {
+			if (data.success) {
 				this.searchedUserData = data.data;
-				this.userSerched = true
+				this.userSerched = true;
+				this.friends = data.data.friends;
 			}
 			else {
 				this.userSerched = false;
@@ -162,21 +165,27 @@ export class DashboardComponent implements OnInit {
 		})
 	}
 
-	changeUserImage(event : any) {
+	changeUserImage(event: any) {
 		console.log(event);
 		let file = event.target.files[0];
 		console.log(file);
 		let reader = new FileReader();
 		reader.readAsDataURL(file);
-		reader.onload = (e : any) => {
-			this.userRegarding.changeUserImage({image : e.target.result}).subscribe((data : any) => {
-				if(data.success) {
+		reader.onload = (e: any) => {
+			this.userRegarding.changeUserImage({ image: e.target.result }).subscribe((data: any) => {
+				if (data.success) {
 					Swal.fire("SongShareApp", data.message, "success");
 				}
-				else{
+				else {
 					Swal.fire("SongShareApp", data.message, "warning");
 				}
 			});
 		}
+	}
+
+	sendFriendRequest(userName : any) {
+		this.userRegarding.sendFriendRequest(userName).subscribe((data : any) => {
+			console.log(data);
+		})
 	}
 }

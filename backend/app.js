@@ -240,83 +240,93 @@ app.get("/getUserDetails", (req, res) => {
 // search friend endpoint
 
 app.post("/searchFriend", (req, res) => {
-    User.findOne({ userName: req.body.userName }, (err, success) => {
-        if (success) {
-            let flag = 0;
-            let userName = success.userName;
-            let image = success.image;
-            FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
-                console.log(success)
-                for (let i = 0; i < success.friendList.length; i++) {
-                    if (success.friendList[i].userName == req.body.userName) {
-                        flag = 1;
-                        // console.log(element.userName);
-                        res.send({
-                            success: true,
-                            message: "from friendList",
-                            data: {
-                                userName: userName,
-                                image: image,
-                                friends: true
-                            }
-                        });
-                    }
-                    else if ((i == success.friendList.length - 1) && (flag == 0)) {
-                        PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
-                            if (success.friendRequests.length != 0) {
-                                for (let j = 0; j < success.friendRequests.length; j++) {
-                                    console.log(success.friendRequests[j].userName, req.body.userName)
-                                    if (success.friendRequests[j].userName == req.body.userName) {
-                                        flag = 1;
-                                        res.send({
-                                            success: true,
-                                            message: "from pending List",
-                                            data: {
-                                                userName: userName,
-                                                image: image,
-                                                friends: true
-                                            }
-                                        });
-                                        console.log("after");
-                                    }
-                                    else if ((j == success.friendRequests.length - 1) && (flag == 0)) {
-                                        res.send({
-                                            success: true,
-                                            message: "User Found",
-                                            data: {
-                                                userName: userName,
-                                                image: image,
-                                                friends: false
-                                            }
-                                        })
+    if (req.body.userName != req.headers.username) {
+        User.findOne({ userName: req.body.userName }, (err, success) => {
+            if (success) {
+                let flag = 0;
+                let userName = success.userName;
+                let image = success.image;
+                FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
+                    console.log(success)
+                    for (let i = 0; i < success.friendList.length; i++) {
+                        if (success.friendList[i].userName == req.body.userName) {
+                            flag = 1;
+                            // console.log(element.userName);
+                            res.send({
+                                success: true,
+                                message: "from friendList",
+                                data: {
+                                    userName: userName,
+                                    image: image,
+                                    friends: true
+                                }
+                            });
+                        }
+                        else if ((i == success.friendList.length - 1) && (flag == 0)) {
+                            PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
+                                if (success.friendRequests.length != 0) {
+                                    for (let j = 0; j < success.friendRequests.length; j++) {
+                                        console.log(success.friendRequests[j].userName, req.body.userName)
+                                        if (success.friendRequests[j].userName == req.body.userName) {
+                                            flag = 1;
+                                            res.send({
+                                                success: true,
+                                                message: "from pending List",
+                                                data: {
+                                                    userName: userName,
+                                                    image: image,
+                                                    friends: true
+                                                }
+                                            });
+                                            console.log("after");
+                                        }
+                                        else if ((j == success.friendRequests.length - 1) && (flag == 0)) {
+                                            res.send({
+                                                success: true,
+                                                message: "User Found",
+                                                data: {
+                                                    userName: userName,
+                                                    image: image,
+                                                    friends: false
+                                                }
+                                            })
+                                        }
                                     }
                                 }
-                            }
-                            else {
-                                res.send({
-                                    success: true,
-                                    message: "User Found",
-                                    data: {
-                                        userName: userName,
-                                        image: image,
-                                        friends: false
-                                    }
-                                })
-                            }
-                        });
+                                else {
+                                    res.send({
+                                        success: true,
+                                        message: "User Found",
+                                        data: {
+                                            userName: userName,
+                                            image: image,
+                                            friends: false
+                                        }
+                                    })
+                                }
+                            });
+                        }
                     }
-                }
-            });
-        }
-        else {
-            console.log("sfsasf")
-            res.send({
-                success: false,
-                message: "User Does Not Exist",
-                data: err
-            });
-        }
-    })
+                });
+            }
+            else {
+                console.log("sfsasf")
+                res.send({
+                    success: false,
+                    message: "User Does Not Exist",
+                    data: err
+                });
+            }
+        })
+    }
+    else {
+        console.log("sfsasf")
+        res.send({
+            success: false,
+            message: "User Does Not Exist",
+            data: null
+        });
+    }
 });
 
 // Change User Iamge endpoint
@@ -349,16 +359,22 @@ app.post("/friendRequest", (req, res) => {
             friendRequests: {
                 userName: req.body.userName,
                 image: req.body.image,
-                request: "sent"
+                request : "sent"
             }
         }
     }, (err, success) => {
+        let senderIamge = "";
+        User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, success) => {
+           console.log(success.image);
+           
+        })
         if (success) {
             PendingRequestList.updateOne({ userName: req.body.userName }, {
                 $push: {
                     friendRequests: {
                         userName: req.headers.username,
-                        image: req.headers.image
+                        image: senderIamge,
+                        request : "received"
                     }
                 }
             }, (err, success) => {

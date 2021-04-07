@@ -246,8 +246,8 @@ app.post("/searchFriend", (req, res) => {
             let userName = success.userName;
             let image = success.image;
             FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
-                console.log("friedlidst")
-                for(let i = 0; i < success.friendList.length; i++) {
+                console.log(success)
+                for (let i = 0; i < success.friendList.length; i++) {
                     if (success.friendList[i].userName == req.body.userName) {
                         flag = 1;
                         // console.log(element.userName);
@@ -261,34 +261,47 @@ app.post("/searchFriend", (req, res) => {
                             }
                         });
                     }
-                    else if((i == success.friendList.length - 1) && (flag == 0)) {
+                    else if ((i == success.friendList.length - 1) && (flag == 0)) {
                         PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
-                            for(let j = 0; j < success.friendRequests.length; j++) {
-                                console.log(success.friendRequests[j].userName, req.body.userName)
-                                if (success.friendRequests[j].userName == req.body.userName) {
-                                    flag = 1;
-                                    res.send({
-                                        success: true,
-                                        message: "from pending List",
-                                        data: {
-                                            userName: userName,
-                                            image: image,
-                                            friends: true
-                                        }
-                                    });
-                                    console.log("after");
+                            if (success.friendRequests.length != 0) {
+                                for (let j = 0; j < success.friendRequests.length; j++) {
+                                    console.log(success.friendRequests[j].userName, req.body.userName)
+                                    if (success.friendRequests[j].userName == req.body.userName) {
+                                        flag = 1;
+                                        res.send({
+                                            success: true,
+                                            message: "from pending List",
+                                            data: {
+                                                userName: userName,
+                                                image: image,
+                                                friends: true
+                                            }
+                                        });
+                                        console.log("after");
+                                    }
+                                    else if ((j == success.friendRequests.length - 1) && (flag == 0)) {
+                                        res.send({
+                                            success: true,
+                                            message: "User Found",
+                                            data: {
+                                                userName: userName,
+                                                image: image,
+                                                friends: false
+                                            }
+                                        })
+                                    }
                                 }
-                                else if((j == success.friendRequests.length - 1) && (flag == 0)) {
-                                    res.send({
-                                        success: true,
-                                        message: "User Found",
-                                        data: {
-                                            userName: userName,
-                                            image: image,
-                                            friends: false
-                                        }
-                                    })
-                                }
+                            }
+                            else {
+                                res.send({
+                                    success: true,
+                                    message: "User Found",
+                                    data: {
+                                        userName: userName,
+                                        image: image,
+                                        friends: false
+                                    }
+                                })
                             }
                         });
                     }

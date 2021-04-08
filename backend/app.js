@@ -426,65 +426,67 @@ app.post("/acceptRequest", (req, res) => {
         }
     }, (err, success) => {
         if(success) {
+            console.log("ps");
             ps = true;
-        }
-    });
-
-    PendingRequestList.updateOne({ userName: req.body.userName }, {
-        $pull: {
-            friendRequests: {
-                userName: req.headers.userName
-            }
-        }
-    }, (err, success) => {
-        if(success) {
-            pr = true;
-        }
-    });
-
-    FriendList.updateOne({userName : req.headers.username}, {
-        $push: {
-            friendList: {
-                userName: req.body.userName,
-                image: req.body.image,
-            }
-        }
-    }, (err, success) => {
-        if(success) {
-            fs = true;
-        }
-    });
-
-    User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, success) => {
-        FriendList.updateOne({userName : req.body.username}, {
-            $push: {
-                friendList: {
-                    userName: req.headers.username,
-                    image: success.image,
+            PendingRequestList.updateOne({ userName: req.body.userName }, {
+                $pull: {
+                    friendRequests: {
+                        userName: req.headers.username
+                    }
                 }
-            }
-        }, (err, success) => {
-            if(success) {
-                fr = true;
-            }
-        });
-    
+            }, (err, success) => {
+                if(success) {
+                    console.log("pr");
+                    pr = true;
+                    FriendList.updateOne({userName : req.headers.username}, {
+                        $push: {
+                            friendList: {
+                                userName: req.body.userName,
+                                image: req.body.image,
+                            }
+                        }
+                    }, (err, success) => {
+                        if(success) {
+                            console.log("fs");
+                            fs = true;
+                            User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, success) => {
+                                FriendList.updateOne({userName : req.body.userName}, {
+                                    $push: {
+                                        friendList: {
+                                            userName: req.headers.username,
+                                            image: success.image,
+                                        }
+                                    }
+                                }, (err, success) => {
+                                    if(success) {
+                                        console.log("fr")
+                                        fr = true;
+                                        if(ps && pr && fs && fr) {
+                                            console.log("hi");
+                                            res.send({
+                                                success : true,
+                                                message : "Both Are Friends",
+                                                data : null
+                                            })
+                                        }
+                                        else {
+                                            console.log("hi");
+                                            res.send({
+                                                success : false,
+                                                message : "not friends",
+                                                data : null
+                                            })
+                                        }
+                                    }
+                                });
+                            
+                            });
+                        }
+                    });
+                }
+            });
+        }
     });
-
-    if(ps && pr && fs && fr) {
-        res.send({
-            success : true,
-            message : "Both Are Friends",
-            data : null
-        })
-    }
-    else {
-        res.send({
-            success : false,
-            message : "not friends",
-            data : null
-        })
-    }
 
 })
 app.get("/updateLists", (req, res) => {

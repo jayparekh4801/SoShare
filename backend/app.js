@@ -310,7 +310,6 @@ app.post("/searchFriend", (req, res) => {
                 });
             }
             else {
-                console.log("sfsasf")
                 res.send({
                     success: false,
                     message: "User Does Not Exist",
@@ -320,7 +319,6 @@ app.post("/searchFriend", (req, res) => {
         })
     }
     else {
-        console.log("sfsasf")
         res.send({
             success: false,
             message: "User Does Not Exist",
@@ -332,7 +330,7 @@ app.post("/searchFriend", (req, res) => {
 // Change User Iamge endpoint
 
 app.post("/changeimage", (req, res) => {
-    User.updateOne({ userName: req.headers.username }, { image: req.body.image }, (req, success) => {
+    User.updateOne({ userName: req.headers.username }, { image: req.body.image }, (err, success) => {
         if (success) {
             res.send({
                 success: true,
@@ -349,6 +347,25 @@ app.post("/changeimage", (req, res) => {
             });
         }
     });
+    let userDetail = {userName : req.headers.username, image : req.body.image}
+    PendingRequestList.updateMany({'friendRequests.userName' : req.headers.username}, {'$set' : {'friendRequests.$' : userDetail}}, (err, success) => {
+        if(success) {
+            console.log(success)
+        }
+        else {
+            console.log(err)
+        }
+    });
+    FriendList.updateMany({'friendList.userName' : req.headers.username}, {'$set' : {'friendList.$' : userDetail}}, (err, success) => {
+        if(success) {
+            console.log(success)
+        }
+        else {
+            console.log(err)
+        }
+    });
+
+
 });
 
 // Send Friend Request endpoint
@@ -363,10 +380,9 @@ app.post("/friendRequest", (req, res) => {
             }
         }
     }, (err, success) => {
-        let senderIamge = "";
+        let senderIamge = {};
         User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, success) => {
-           console.log(success.image);
-           
+            senderIamge = success.image;
         })
         if (success) {
             PendingRequestList.updateOne({ userName: req.body.userName }, {
@@ -395,6 +411,12 @@ app.post("/friendRequest", (req, res) => {
             })
         }
     });
+});
+
+// Update User's Pending Requests And FriendLists
+
+app.get("/updateLists", (req, res) => {
+    PendingRequestList.updateOne({userName : req.headers.username}, )
 })
 // endPoints Listener
 

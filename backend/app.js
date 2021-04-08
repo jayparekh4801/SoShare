@@ -380,36 +380,35 @@ app.post("/friendRequest", (req, res) => {
             }
         }
     }, (err, success) => {
-        let senderIamge = {};
-        User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, success) => {
-            senderIamge = success.image;
-        })
-        if (success) {
-            PendingRequestList.updateOne({ userName: req.body.userName }, {
-                $push: {
-                    friendRequests: {
-                        userName: req.headers.username,
-                        image: senderIamge,
-                        request : "received"
+        User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, successed) => {
+            if (success) {
+                PendingRequestList.updateOne({ userName: req.body.userName }, {
+                    $push: {
+                        friendRequests: {
+                            userName: req.headers.username,
+                            image: successed.image,
+                            request : "received"
+                        }
                     }
-                }
-            }, (err, success) => {
-                if (success) {
-                    res.send({
-                        success: true,
-                        message: "Request Is Sent",
-                        data: null
-                    })
-                }
-            })
-        }
-        else {
-            res.send({
-                success: false,
-                message: "Request Not Sent, Please Try Again",
-                data: err
-            })
-        }
+                }, (err, success) => {
+                    if (success) {
+                        res.send({
+                            success: true,
+                            message: "Request Is Sent",
+                            data: null
+                        })
+                    }
+                })
+            }
+            else {
+                res.send({
+                    success: false,
+                    message: "Request Not Sent, Please Try Again",
+                    data: err
+                })
+            }
+        })
+        
     });
 });
 

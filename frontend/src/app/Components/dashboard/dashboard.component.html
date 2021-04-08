@@ -142,12 +142,19 @@
                 <div class="card-body">
                     <h5 class="card-title">Pending Requests</h5>
                     <ul class="friend-list">
-                        <li *ngFor="let friend of pendingRequestsData">
-                            <div class="left">
+                        <li *ngFor="let friend of pendingRequestsData" class="d-flex" style="cursor: auto;">
+                            <div class="left p-2">
                                 <img [src]="friend.image" alt="">
                             </div>
-                            <div class="right">
+                            <div class="right p-2">
                                 <h3>{{friend.userName}}</h3>
+                            </div>
+                            <div *ngIf= "friend.request == 'received'" class="ml-auto p-2 left">
+                                <i class="fa fa-check-circle fa-2x" style="color: green; cursor: pointer;" title="Accept" (click) = "addToFriend(friend)"></i>
+                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeRequest(friend)"></i>
+                            </div>
+                            <div *ngIf= "friend.request == 'sent'" class="ml-auto p-2 left">
+                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeRequest(friend)"></i>
                             </div>
                         </li>
                     </ul>

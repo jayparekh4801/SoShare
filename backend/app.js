@@ -247,7 +247,6 @@ app.post("/searchFriend", (req, res) => {
                 let userName = success.userName;
                 let image = success.image;
                 FriendList.findOne({ userName: req.headers.username }, { friendList: 1, _id: 0 }, (err, success) => {
-                    console.log(success)
                     for (let i = 0; i < success.friendList.length; i++) {
                         if (success.friendList[i].userName == req.body.userName) {
                             flag = 1;
@@ -347,17 +346,17 @@ app.post("/changeimage", (req, res) => {
             });
         }
     });
-    let userDetail = {userName : req.headers.username, image : req.body.image}
-    PendingRequestList.updateMany({'friendRequests.userName' : req.headers.username}, {'$set' : {'friendRequests.$' : userDetail}}, (err, success) => {
-        if(success) {
+    let userDetail = { userName: req.headers.username, image: req.body.image }
+    PendingRequestList.updateMany({ 'friendRequests.userName': req.headers.username }, { '$set': { 'friendRequests.$': userDetail } }, (err, success) => {
+        if (success) {
             console.log(success)
         }
         else {
             console.log(err)
         }
     });
-    FriendList.updateMany({'friendList.userName' : req.headers.username}, {'$set' : {'friendList.$' : userDetail}}, (err, success) => {
-        if(success) {
+    FriendList.updateMany({ 'friendList.userName': req.headers.username }, { '$set': { 'friendList.$': userDetail } }, (err, success) => {
+        if (success) {
             console.log(success)
         }
         else {
@@ -376,18 +375,18 @@ app.post("/friendRequest", (req, res) => {
             friendRequests: {
                 userName: req.body.userName,
                 image: req.body.image,
-                request : "sent"
+                request: "sent"
             }
         }
     }, (err, success) => {
-        User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, successed) => {
+        User.findOne({ userName: req.headers.username }, { image: 1, _id: 0 }, (err, successed) => {
             if (success) {
                 PendingRequestList.updateOne({ userName: req.body.userName }, {
                     $push: {
                         friendRequests: {
                             userName: req.headers.username,
                             image: successed.image,
-                            request : "received"
+                            request: "received"
                         }
                     }
                 }, (err, success) => {
@@ -408,14 +407,88 @@ app.post("/friendRequest", (req, res) => {
                 })
             }
         })
-        
+
     });
 });
 
-// Update User's Pending Requests And FriendLists
+// Accept Friend Request
 
+app.post("/acceptRequest", (req, res) => {
+    let ps = false;
+    let pr = false;
+    let fs = false;
+    let fr = false;
+    PendingRequestList.updateOne({ userName: req.headers.username }, {
+        $pull: {
+            friendRequests: {
+                userName: req.body.userName
+            }
+        }
+    }, (err, success) => {
+        if(success) {
+            ps = true;
+        }
+    });
+
+    PendingRequestList.updateOne({ userName: req.body.userName }, {
+        $pull: {
+            friendRequests: {
+                userName: req.headers.userName
+            }
+        }
+    }, (err, success) => {
+        if(success) {
+            pr = true;
+        }
+    });
+
+    FriendList.updateOne({userName : req.headers.username}, {
+        $push: {
+            friendList: {
+                userName: req.body.userName,
+                image: req.body.image,
+            }
+        }
+    }, (err, success) => {
+        if(success) {
+            fs = true;
+        }
+    });
+
+    User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, success) => {
+        FriendList.updateOne({userName : req.body.username}, {
+            $push: {
+                friendList: {
+                    userName: req.headers.username,
+                    image: success.image,
+                }
+            }
+        }, (err, success) => {
+            if(success) {
+                fr = true;
+            }
+        });
+    
+    });
+
+    if(ps && pr && fs && fr) {
+        res.send({
+            success : true,
+            message : "Both Are Friends",
+            data : null
+        })
+    }
+    else {
+        res.send({
+            success : false,
+            message : "not friends",
+            data : null
+        })
+    }
+
+})
 app.get("/updateLists", (req, res) => {
-    PendingRequestList.updateOne({userName : req.headers.username}, )
+    PendingRequestList.updateOne({ userName: req.headers.username },)
 })
 // endPoints Listener
 

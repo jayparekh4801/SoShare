@@ -53,4 +53,13 @@ export class UserRegardingService {
 
 		return this.http.post("http://localhost:8000/acceptRequest", friend, {headers : header});
 	}
+
+	declinerequest(declineUserName : any) {
+		let header = new HttpHeaders();
+		let userName = localStorage.getItem("userName");
+		if (userName != null) {
+			header = header.set('userName', userName);
+		}
+		return this.http.post("http://localhost:8000/declinRequest", {userName : declineUserName}, {headers : header});
+	}
 }

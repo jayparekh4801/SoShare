@@ -488,9 +488,44 @@ app.post("/acceptRequest", (req, res) => {
         }
     });
 
-})
-app.get("/updateLists", (req, res) => {
-    PendingRequestList.updateOne({ userName: req.headers.username },)
+});
+
+// Decline Request
+
+app.post("/declinRequest", (req, res) => {
+    console.log(req.body);
+    PendingRequestList.updateOne({userName : req.headers.username}, {
+        $pull: {
+            friendRequests: {
+                userName: req.body.userName
+            }
+        }
+    }, (err, success) => {
+        if(success) {
+            PendingRequestList.updateOne({ userName: req.body.userName }, {
+                $pull: {
+                    friendRequests: {
+                        userName: req.headers.username
+                    }
+                }
+            }, (err, success) => {
+                if(success) {
+                    res.send({
+                        success : true,
+                        message : "Request Rejected Succefully",
+                        data : null
+                    })
+                }
+                else {
+                    res.send({
+                        success : false,
+                        message : "Request Not Rejected, Try Again",
+                        data : null
+                    })
+                }
+            });
+        }
+    })
 })
 // endPoints Listener
 

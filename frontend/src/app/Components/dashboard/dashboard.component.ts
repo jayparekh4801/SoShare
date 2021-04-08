@@ -194,12 +194,16 @@ export class DashboardComponent implements OnInit {
 	addToFriend(friend : any) {
 		this.userRegarding.acceptRequest(friend).subscribe((data : any) => {
 			if(data.success) {
-				Swal.fire("SongShareApp", "Both Are Friends Now", "success");
+				Swal.fire("SongShareApp", data.message, "success");
 			}
 		})
 	}
 
 	removeRequest(friend : any) {
-
+		this.userRegarding.declinerequest(friend.userName).subscribe((data : any) => {
+			if(data.success) {
+				Swal.fire("SongShareApp", data.message, "success");
+			}
+		})
 	}
 }

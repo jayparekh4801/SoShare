@@ -250,7 +250,6 @@ app.post("/searchFriend", (req, res) => {
                     for (let i = 0; i < success.friendList.length; i++) {
                         if (success.friendList[i].userName == req.body.userName) {
                             flag = 1;
-                            // console.log(element.userName);
                             res.send({
                                 success: true,
                                 message: "from friendList",
@@ -265,7 +264,6 @@ app.post("/searchFriend", (req, res) => {
                             PendingRequestList.findOne({ userName: req.headers.username }, { friendRequests: 1, _id: 0 }, (err, success) => {
                                 if (success.friendRequests.length != 0) {
                                     for (let j = 0; j < success.friendRequests.length; j++) {
-                                        console.log(success.friendRequests[j].userName, req.body.userName)
                                         if (success.friendRequests[j].userName == req.body.userName) {
                                             flag = 1;
                                             res.send({
@@ -277,7 +275,6 @@ app.post("/searchFriend", (req, res) => {
                                                     friends: true
                                                 }
                                             });
-                                            console.log("after");
                                         }
                                         else if ((j == success.friendRequests.length - 1) && (flag == 0)) {
                                             res.send({
@@ -349,18 +346,14 @@ app.post("/changeimage", (req, res) => {
     let userDetail = { userName: req.headers.username, image: req.body.image }
     PendingRequestList.updateMany({ 'friendRequests.userName': req.headers.username }, { '$set': { 'friendRequests.$': userDetail } }, (err, success) => {
         if (success) {
-            console.log(success)
         }
         else {
-            console.log(err)
         }
     });
     FriendList.updateMany({ 'friendList.userName': req.headers.username }, { '$set': { 'friendList.$': userDetail } }, (err, success) => {
         if (success) {
-            console.log(success)
         }
         else {
-            console.log(err)
         }
     });
 
@@ -426,7 +419,6 @@ app.post("/acceptRequest", (req, res) => {
         }
     }, (err, success) => {
         if(success) {
-            console.log("ps");
             ps = true;
             PendingRequestList.updateOne({ userName: req.body.userName }, {
                 $pull: {
@@ -436,7 +428,6 @@ app.post("/acceptRequest", (req, res) => {
                 }
             }, (err, success) => {
                 if(success) {
-                    console.log("pr");
                     pr = true;
                     FriendList.updateOne({userName : req.headers.username}, {
                         $push: {
@@ -447,7 +438,6 @@ app.post("/acceptRequest", (req, res) => {
                         }
                     }, (err, success) => {
                         if(success) {
-                            console.log("fs");
                             fs = true;
                             User.findOne({userName : req.headers.username}, {image : 1, _id : 0}, (err, success) => {
                                 FriendList.updateOne({userName : req.body.userName}, {
@@ -459,10 +449,8 @@ app.post("/acceptRequest", (req, res) => {
                                     }
                                 }, (err, success) => {
                                     if(success) {
-                                        console.log("fr")
                                         fr = true;
                                         if(ps && pr && fs && fr) {
-                                            console.log("hi");
                                             res.send({
                                                 success : true,
                                                 message : "Both Are Friends",
@@ -470,7 +458,6 @@ app.post("/acceptRequest", (req, res) => {
                                             })
                                         }
                                         else {
-                                            console.log("hi");
                                             res.send({
                                                 success : false,
                                                 message : "not friends",
@@ -493,7 +480,6 @@ app.post("/acceptRequest", (req, res) => {
 // Decline Request
 
 app.post("/declinRequest", (req, res) => {
-    console.log(req.body);
     PendingRequestList.updateOne({userName : req.headers.username}, {
         $pull: {
             friendRequests: {

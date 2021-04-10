@@ -135,7 +135,8 @@
                                 <h3>{{friend.userName}}</h3>
                             </div>
                             <div *ngIf= "friend.userName !='parekhjay0408'" class="ml-auto p-2 left">
-                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeFriend(friend.userName)"></i>
+                                <i class="fa fa-gg-circle fa-2x" style="color: green; cursor: pointer;" title="Connet To Friend " (click) = "addToFriend(friend)"></i>
+                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Unfriend" (click) = "removeFriend(friend.userName)"></i>
                             </div>
                         </li>
                     </ul>
@@ -146,10 +147,10 @@
                     <h5 class="card-title">Pending Requests</h5>
                     <ul class="friend-list">
                         <li *ngFor="let friend of pendingRequestsData" class="d-flex" style="cursor: auto;">
-                            <div class="left p-2">
+                            <div class="left">
                                 <img [src]="friend.image" alt="">
                             </div>
-                            <div class="right p-2">
+                            <div class="right">
                                 <h3>{{friend.userName}}</h3>
                             </div>
                             <div *ngIf= "friend.request == 'received'" class="ml-auto p-2 left">

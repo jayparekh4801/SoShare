@@ -208,13 +208,15 @@ export class DashboardComponent implements OnInit {
 	}
 
 	removeFriend(userName : any) {
-		this.userRegarding.removeFriend(userName).subscribe((data : any) => {
-			if(data.success) {
-				Swal.fire("SongShareApp", data.message, "success");
-			}
-			else {
-				Swal.fire("SongShareApp", data.message, "warning");
-			}
-		})
+		if(confirm("Are You Sure You Want To Un Frined This User")) {
+			this.userRegarding.removeFriend(userName).subscribe((data : any) => {
+				if(data.success) {
+					Swal.fire("SongShareApp", data.message, "success");
+				}
+				else {
+					Swal.fire("SongShareApp", data.message, "warning");
+				}
+			});
+		}
 	}
 }

@@ -199,10 +199,21 @@ export class DashboardComponent implements OnInit {
 		})
 	}
 
-	removeRequest(friend : any) {
-		this.userRegarding.declinerequest(friend.userName).subscribe((data : any) => {
+	removeRequest(userName : any) {
+		this.userRegarding.declinerequest(userName).subscribe((data : any) => {
 			if(data.success) {
 				Swal.fire("SongShareApp", data.message, "success");
+			}
+		})
+	}
+
+	removeFriend(userName : any) {
+		this.userRegarding.removeFriend(userName).subscribe((data : any) => {
+			if(data.success) {
+				Swal.fire("SongShareApp", data.message, "success");
+			}
+			else {
+				Swal.fire("SongShareApp", data.message, "warning");
 			}
 		})
 	}

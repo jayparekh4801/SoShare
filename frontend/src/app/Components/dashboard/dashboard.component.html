@@ -134,6 +134,9 @@
                             <div class="right">
                                 <h3>{{friend.userName}}</h3>
                             </div>
+                            <div *ngIf= "friend.userName !='parekhjay0408'" class="ml-auto p-2 left">
+                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeFriend(friend.userName)"></i>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -151,10 +154,10 @@
                             </div>
                             <div *ngIf= "friend.request == 'received'" class="ml-auto p-2 left">
                                 <i class="fa fa-check-circle fa-2x" style="color: green; cursor: pointer;" title="Accept" (click) = "addToFriend(friend)"></i>
-                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeRequest(friend)"></i>
+                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeRequest(friend.userName)"></i>
                             </div>
                             <div *ngIf= "friend.request == 'sent'" class="ml-auto p-2 left">
-                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeRequest(friend)"></i>
+                                <i class="fa fa-minus-circle fa-2x ml-1" style="color: red; cursor: pointer;" title="Decline" (click) = "removeRequest(friend.userName)"></i>
                             </div>
                         </li>
                     </ul>

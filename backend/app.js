@@ -507,9 +507,46 @@ app.post("/declinRequest", (req, res) => {
                         success : false,
                         message : "Request Not Rejected, Try Again",
                         data : null
-                    })
+                    });
                 }
             });
+        }
+    });
+});
+
+// remove Friend endpoint
+
+app.post("/removeFriend", (req, res) => {
+    FriendList.updateOne({userName : req.headers.username}, {
+        $pull : {
+            friendList : {
+                userName : req.body.userName
+            }
+        }
+    }, (err, success) => {
+        if(success) {
+            FriendList.updateOne({userName : req.body.userName}, {
+                $pull : {
+                    friendList : {
+                        userName : req.headers.username
+                    }
+                }
+            }, (err, success) => {
+                if(success) {
+                    res.send({
+                        success : true,
+                        message : "Un Friend Successfully",
+                        data : null
+                    })
+                }
+                else {
+                    res.send({
+                        success : false,
+                        message : "Please Try Again",
+                        data : err
+                    })
+                }
+            })
         }
     })
 })

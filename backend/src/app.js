@@ -544,11 +544,17 @@ app.post("/removeFriend", (req, res) => {
                         success : false,
                         message : "Please Try Again",
                         data : err
-                    })
+                    });
                 }
-            })
+            });
         }
-    })
+    });
+});
+
+// 404 page
+
+app.get('*', (req, res) => {
+    res.send("No One Is Here");
 })
 // endPoints Listener
 
